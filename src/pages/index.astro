@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContentCard from '../components/ContentCard.astro';
+import { getCollection } from 'astro:content';
+
+const allLabs = await getCollection('labs');
+const featuredLabs = allLabs
+  .filter((lab) => lab.data.featured)
+  .toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const recentLabs = [...allLabs]
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+const labsToShow = featuredLabs.length > 0 ? featuredLabs : recentLabs;
+---
+
+<BaseLayout title="sepn0r — 개발자 & 강사">
+  <section class="py-16">
+    <h1 class="text-4xl font-bold tracking-tight">안녕하세요,<br /><span class="text-neutral-500">sepn0r</span>입니다.</h1>
+    <p class="mt-4 text-lg text-neutral-500 max-w-xl">
+      개발자이자 강사로서 실습 자료와 프로젝트를 공유합니다.
+    </p>
+    <div class="mt-8 flex gap-4">
+      <a href="/labs" class="inline-flex items-center rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 transition-colors">
+        실습 자료 보기
+      </a>
+      <a href="/about" class="inline-flex items-center rounded-lg border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
+        소개
+      </a>
+    </div>
+  </section>
+
+  {labsToShow.length > 0 && (
+    <section class="pb-16">
+      <h2 class="text-xl font-semibold mb-6">
+        {featuredLabs.length > 0 ? '추천 실습 자료' : '최근 실습 자료'}
+      </h2>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {labsToShow.map((lab) => (
+          <ContentCard
+            title={lab.data.title}
+            description={lab.data.description}
+            tags={lab.data.tags}
+            href={`/labs/${lab.id}`}
+          />
+        ))}
+      </div>
+      <div class="mt-6 text-center">
+        <a href="/labs" class="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
+          모든 실습 자료 보기 &rarr;
+        </a>
+      </div>
+    </section>
+  )}
+</BaseLayout>

@@ -1,0 +1,21 @@
+{
+  "name": "sepn0r",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.3",
+    "astro": "^6.1.8",
+    "tailwindcss": "^4.2.3"
+  }
+}

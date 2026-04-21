@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPortfolio = await getCollection('portfolio');
+const sortedPortfolio = allPortfolio.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="포트폴리오 — sepn0r" description="프로젝트 포트폴리오">
+  <h1 class="text-3xl font-bold tracking-tight">포트폴리오</h1>
+  <p class="mt-2 text-neutral-500">진행한 프로젝트들을 모아둔 곳입니다.</p>
+
+  {sortedPortfolio.length > 0 ? (
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      {sortedPortfolio.map((item) => (
+        <ContentCard
+          title={item.data.title}
+          description={item.data.description}
+          tags={item.data.tags}
+          href={`/portfolio/${item.id}`}
+        />
+      ))}
+    </div>
+  ) : (
+    <div class="mt-16 text-center">
+      <p class="text-neutral-400">포트폴리오를 준비 중입니다.</p>
+      <p class="mt-2 text-sm text-neutral-300">곧 프로젝트들을 공유할 예정입니다.</p>
+    </div>
+  )}
+</BaseLayout>

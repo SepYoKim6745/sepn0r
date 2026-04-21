@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import { getCollection } from 'astro:content';
+
+const allLabs = await getCollection('labs');
+const sortedLabs = allLabs.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="실습 자료 — sepn0r" description="강의 실습 자료 모음">
+  <h1 class="text-3xl font-bold tracking-tight">실습 자료</h1>
+  <p class="mt-2 text-neutral-500">강의에서 사용하는 실습 자료를 모아둔 곳입니다.</p>
+
+  {sortedLabs.length > 0 ? (
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      {sortedLabs.map((lab) => (
+        <ContentCard
+          title={lab.data.title}
+          description={lab.data.description}
+          tags={lab.data.tags}
+          href={`/labs/${lab.id}`}
+        />
+      ))}
+    </div>
+  ) : (
+    <p class="mt-8 text-neutral-400">아직 실습 자료가 없습니다.</p>
+  )}
+</BaseLayout>
