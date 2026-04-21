@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContentCard from '../../components/ContentCard.astro';
 import { getCollection } from 'astro:content';
 
+const baseURL = import.meta.env.BASE_URL;
 const allLabs = await getCollection('labs');
 const sortedLabs = allLabs.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
@@ -18,7 +19,7 @@ const sortedLabs = allLabs.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubD
           title={lab.data.title}
           description={lab.data.description}
           tags={lab.data.tags}
-          href={`/labs/${lab.id}`}
+          href={`${baseURL}/labs/${lab.id}/`}
         />
       ))}
     </div>

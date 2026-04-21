@@ -14,7 +14,13 @@
       "Bash(npm create:*)",
       "Bash(npm install:*)",
       "Bash(npm run:*)",
-      "Bash(npx astro:*)"
+      "Bash(npx astro:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh run:*)",
+      "Bash(find /Users/kim-yosep/Desktop/sepn0r/dist -name \"*.css\" -exec wc -c {} \\\\;)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

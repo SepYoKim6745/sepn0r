@@ -8,6 +8,7 @@ interface Props {
 
 const { title, description = '개발자 & 강사 포트폴리오 및 실습 자료' } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const baseURL = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -34,7 +35,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <div class="mx-auto max-w-3xl px-6">
       <slot name="nav">
         <nav class="flex items-center justify-between py-8">
-          <a href="/" class="text-lg font-bold tracking-tight">sepn0r</a>
+          <a href={baseURL} class="text-lg font-bold tracking-tight">sepn0r</a>
           <button
             id="menu-toggle"
             class="sm:hidden p-2 -mr-2"
@@ -46,9 +47,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             </svg>
           </button>
           <ul class="hidden sm:flex gap-6 text-sm font-medium text-neutral-600">
-            <li><a href="/labs" class="hover:text-neutral-900 transition-colors">Labs</a></li>
-            <li><a href="/portfolio" class="hover:text-neutral-900 transition-colors">Portfolio</a></li>
-            <li><a href="/about" class="hover:text-neutral-900 transition-colors">About</a></li>
+            <li><a href={`${baseURL}/labs/`} class="hover:text-neutral-900 transition-colors">Labs</a></li>
+            <li><a href={`${baseURL}/portfolio/`} class="hover:text-neutral-900 transition-colors">Portfolio</a></li>
+            <li><a href={`${baseURL}/about/`} class="hover:text-neutral-900 transition-colors">About</a></li>
           </ul>
         </nav>
 
@@ -66,10 +67,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <a href="/" class="text-2xl font-medium">Home</a>
-          <a href="/labs" class="text-2xl font-medium">Labs</a>
-          <a href="/portfolio" class="text-2xl font-medium">Portfolio</a>
-          <a href="/about" class="text-2xl font-medium">About</a>
+          <a href={baseURL} class="text-2xl font-medium">Home</a>
+          <a href={`${baseURL}/labs/`} class="text-2xl font-medium">Labs</a>
+          <a href={`${baseURL}/portfolio/`} class="text-2xl font-medium">Portfolio</a>
+          <a href={`${baseURL}/about/`} class="text-2xl font-medium">About</a>
         </div>
       </slot>
 
