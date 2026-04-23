@@ -25,3 +25,52 @@ pre {
 pre > code {
   font-family: var(--font-mono);
 }
+
+/* Details / Summary — 정답 예시 토글 박스 */
+details {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background-color: #ffffff;
+}
+
+details[open] {
+  background-color: #f9fafb;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::before {
+  content: "▶ ";
+  font-size: 0.75em;
+}
+
+details[open] summary::before {
+  content: "▼ ";
+}
+
+summary:hover {
+  color: #111827;
+}
+
+details[open] > *:not(summary) {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* prose 안의 details margin 보정 */
+.prose details {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
