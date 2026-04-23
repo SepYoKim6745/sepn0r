@@ -1,0 +1,264 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  allLabs: Array<{
+    id: string;
+    data: {
+      title: string;
+      category: string;
+      order?: number;
+    };
+  }>;
+  currentId: string;
+}
+
+const { title, description = '개발자 & 강사 포트폴리오 및 실습 자료', allLabs, currentId } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const baseURL = import.meta.env.BASE_URL;
+
+// 카테고리별 그룹핑 및 정렬
+const categoryNames = [...new Set(allLabs.map(lab => lab.data.category))].sort();
+const categories = categoryNames.map(cat => ({
+  name: cat,
+  labs: allLabs
+    .filter(lab => lab.data.category === cat)
+    .sort((a, b) => {
+      if (a.data.order !== undefined && b.data.order !== undefined) {
+        return a.data.order - b.data.order;
+      }
+      if (a.data.order !== undefined) return -1;
+      if (b.data.order !== undefined) return 1;
+      return a.data.title.localeCompare(b.data.title, 'ko');
+    }),
+}));
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <link rel="canonical" href={canonicalURL} />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-white text-neutral-900 font-sans antialiased">
+
+    <!-- 상단 네비게이션 -->
+    <div class="border-b border-neutral-200">
+      <div class="mx-auto max-w-screen-xl px-6">
+        <nav class="flex items-center justify-between py-4">
+          <a href={baseURL} class="text-lg font-bold tracking-tight">sepn0r</a>
+          <button
+            id="menu-toggle"
+            class="sm:hidden p-2 -mr-2"
+            aria-label="메뉴 열기"
+            aria-expanded="false"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <ul class="hidden sm:flex gap-6 text-sm font-medium text-neutral-600">
+            <li><a href={`${baseURL}/labs/`} class="hover:text-neutral-900 transition-colors">Labs</a></li>
+            <li><a href={`${baseURL}/portfolio/`} class="hover:text-neutral-900 transition-colors">Portfolio</a></li>
+            <li><a href={`${baseURL}/about/`} class="hover:text-neutral-900 transition-colors">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- 모바일 햄버거 메뉴 -->
+    <div
+      id="mobile-menu"
+      class="fixed inset-0 z-50 bg-white hidden flex-col items-center justify-center gap-8"
+    >
+      <button
+        id="menu-close"
+        class="absolute top-8 right-6 p-2"
+        aria-label="메뉴 닫기"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <a href={baseURL} class="text-2xl font-medium">Home</a>
+      <a href={`${baseURL}/labs/`} class="text-2xl font-medium">Labs</a>
+      <a href={`${baseURL}/portfolio/`} class="text-2xl font-medium">Portfolio</a>
+      <a href={`${baseURL}/about/`} class="text-2xl font-medium">About</a>
+    </div>
+
+    <!-- 사이드바 + 콘텐츠 레이아웃 -->
+    <div class="flex">
+
+      <!-- 데스크톱 사이드바 -->
+      <aside class="hidden lg:flex flex-col w-64 shrink-0 border-r border-neutral-200 sticky top-0 h-screen overflow-y-auto px-4 py-6">
+        <div class="mb-4">
+          <a
+            href={`${baseURL}/labs/`}
+            class="text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors"
+          >
+            &larr; 모든 실습 자료
+          </a>
+        </div>
+
+        {categories.map(cat => (
+          <div class="mb-6">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+              {cat.name}
+            </h3>
+            {cat.labs.map(lab => (
+              <a
+                href={`${baseURL}/labs/${lab.id}/`}
+                class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+                  lab.id === currentId
+                    ? 'bg-neutral-100 text-neutral-900 font-medium'
+                    : 'text-neutral-600 hover:text-neutral-900'
+                }`}
+              >
+                {lab.data.title}
+              </a>
+            ))}
+          </div>
+        ))}
+      </aside>
+
+      <!-- 모바일 사이드바 오버레이 -->
+      <div
+        id="sidebar-overlay"
+        class="fixed inset-0 z-40 bg-white overflow-y-auto hidden lg:hidden"
+      >
+        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+          <span class="text-sm font-semibold text-neutral-700">목차</span>
+          <button
+            id="sidebar-close"
+            class="p-2 -mr-2"
+            aria-label="목차 닫기"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="px-4 py-6">
+          <div class="mb-4">
+            <a
+              href={`${baseURL}/labs/`}
+              class="text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors"
+            >
+              &larr; 모든 실습 자료
+            </a>
+          </div>
+
+          {categories.map(cat => (
+            <div class="mb-6">
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+                {cat.name}
+              </h3>
+              {cat.labs.map(lab => (
+                <a
+                  href={`${baseURL}/labs/${lab.id}/`}
+                  class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+                    lab.id === currentId
+                      ? 'bg-neutral-100 text-neutral-900 font-medium'
+                      : 'text-neutral-600 hover:text-neutral-900'
+                  }`}
+                >
+                  {lab.data.title}
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 메인 콘텐츠 -->
+      <main class="flex-1 min-w-0 px-6 py-8">
+        <!-- 모바일 목차 버튼 -->
+        <div class="lg:hidden mb-6">
+          <button
+            id="sidebar-toggle"
+            class="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 border border-neutral-200 rounded-md px-3 py-1.5 transition-colors"
+            aria-expanded="false"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16" />
+            </svg>
+            목차 보기
+          </button>
+        </div>
+
+        <div class="max-w-3xl mx-auto">
+          <slot />
+        </div>
+      </main>
+    </div>
+
+    <script is:inline>
+      // 햄버거 메뉴
+      const toggle = document.getElementById('menu-toggle');
+      const close = document.getElementById('menu-close');
+      const menu = document.getElementById('mobile-menu');
+
+      function openMenu() {
+        menu?.classList.remove('hidden');
+        menu?.classList.add('flex');
+        toggle?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        menu?.classList.add('hidden');
+        menu?.classList.remove('flex');
+        toggle?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        toggle?.focus();
+      }
+
+      toggle?.addEventListener('click', openMenu);
+      close?.addEventListener('click', closeMenu);
+
+      // 사이드바 오버레이
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarClose = document.getElementById('sidebar-close');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+      function openSidebar() {
+        sidebarOverlay?.classList.remove('hidden');
+        sidebarToggle?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebarOverlay?.classList.add('hidden');
+        sidebarToggle?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        sidebarToggle?.focus();
+      }
+
+      sidebarToggle?.addEventListener('click', openSidebar);
+      sidebarClose?.addEventListener('click', closeSidebar);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (!menu?.classList.contains('hidden')) closeMenu();
+          if (!sidebarOverlay?.classList.contains('hidden')) closeSidebar();
+        }
+      });
+    </script>
+  </body>
+</html>

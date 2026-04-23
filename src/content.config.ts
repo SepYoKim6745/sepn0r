@@ -9,6 +9,7 @@ const labs = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
+    category: z.string().default('기타'),
     playgroundUrl: z.string().url().optional(),
     downloadFile: z.string().optional(),
     order: z.number().optional(),

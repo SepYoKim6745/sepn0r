@@ -5,22 +5,38 @@ import { getCollection } from 'astro:content';
 
 const baseURL = import.meta.env.BASE_URL;
 const allLabs = await getCollection('labs');
-const sortedLabs = allLabs.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const categoryNames = [...new Set(allLabs.map(lab => lab.data.category))].sort();
+const grouped = categoryNames.map(cat => ({
+  name: cat,
+  labs: allLabs
+    .filter(lab => lab.data.category === cat)
+    .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999)),
+}));
 ---
 
 <BaseLayout title="실습 자료 — sepn0r" description="강의 실습 자료 모음">
   <h1 class="text-3xl font-bold tracking-tight">실습 자료</h1>
   <p class="mt-2 text-neutral-500">강의에서 사용하는 실습 자료를 모아둔 곳입니다.</p>
 
-  {sortedLabs.length > 0 ? (
-    <div class="mt-8 grid gap-4 sm:grid-cols-2">
-      {sortedLabs.map((lab) => (
-        <ContentCard
-          title={lab.data.title}
-          description={lab.data.description}
-          tags={lab.data.tags}
-          href={`${baseURL}/labs/${lab.id}/`}
-        />
+  {allLabs.length > 0 ? (
+    <div class="mt-8 space-y-10">
+      {grouped.map(group => (
+        <section>
+          <h2 class="text-lg font-semibold text-neutral-800 mb-4 pb-2 border-b border-neutral-200">
+            {group.name}
+          </h2>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {group.labs.map(lab => (
+              <ContentCard
+                title={lab.data.title}
+                description={lab.data.description}
+                tags={lab.data.tags}
+                href={`${baseURL}/labs/${lab.id}/`}
+              />
+            ))}
+          </div>
+        </section>
       ))}
     </div>
   ) : (

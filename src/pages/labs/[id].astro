@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -14,6 +14,8 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const baseURL = import.meta.env.BASE_URL;
 
+const allLabs = await getCollection('labs');
+
 const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
   year: 'numeric',
   month: 'long',
@@ -21,7 +23,12 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
 });
 ---
 
-<BaseLayout title={`${entry.data.title} — sepn0r`} description={entry.data.description}>
+<DocsLayout
+  title={`${entry.data.title} — sepn0r`}
+  description={entry.data.description}
+  allLabs={allLabs}
+  currentId={entry.id}
+>
   <article>
     <header class="mb-8">
       <h1 class="text-3xl font-bold tracking-tight">{entry.data.title}</h1>
@@ -68,10 +75,4 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
       <Content />
     </div>
   </article>
-
-  <div class="mt-12 pt-8 border-t border-neutral-200">
-    <a href={`${baseURL}/labs/`} class="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
-      &larr; 모든 실습 자료
-    </a>
-  </div>
-</BaseLayout>
+</DocsLayout>

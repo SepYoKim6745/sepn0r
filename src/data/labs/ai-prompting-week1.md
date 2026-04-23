@@ -3,6 +3,7 @@ title: "생성형 AI 활용 실습 — Week 1"
 description: "프롬프트 엔지니어링 기초: R.C.I.F.C, Few-shot Prompting, Chain-of-Thought, 페르소나, 메타 프롬프팅, 역질문 기법"
 pubDate: 2026-04-24
 tags: ["AI", "프롬프트 엔지니어링", "입문"]
+category: "생성형 AI 활용"
 featured: true
 ---
 

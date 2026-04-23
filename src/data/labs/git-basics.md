@@ -3,6 +3,7 @@ title: "Git 기초: 버전 관리 시작하기"
 description: "Git의 기본 개념과 핵심 명령어를 실습을 통해 배웁니다."
 pubDate: 2026-04-18
 tags: ["Git", "도구"]
+category: "Git 기초"
 downloadFile: "git-cheatsheet.pdf"
 featured: true
 ---

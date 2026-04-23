@@ -3,6 +3,7 @@ title: "Python 기초: Hello World부터 시작하기"
 description: "Python 개발 환경 설정부터 첫 번째 프로그램 작성까지 단계별로 알아봅니다."
 pubDate: 2026-04-20
 tags: ["Python", "입문"]
+category: "Python"
 playgroundUrl: "https://codesandbox.io/p/sandbox/python-hello"
 featured: true
 ---
