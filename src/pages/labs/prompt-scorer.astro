@@ -181,7 +181,7 @@ async function scoreWithGemini(prompt, apiKey) {
     }),
   });
 
-  if (res.status === 429) throw new Error('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+  if (res.status === 429) return null; // 폴백 신호
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || `API 오류 (${res.status})`);
@@ -316,17 +316,27 @@ async function evaluate() {
   btnText.textContent = '평가 중...';
   spinner.classList.remove('hidden');
   errorBox.classList.add('hidden');
+  errorBox.className = 'hidden mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600';
   document.getElementById('result').classList.add('hidden');
 
   try {
     let result;
+    let usedFallback = false;
     if (GEMINI_KEY) {
       result = await scoreWithGemini(prompt, GEMINI_KEY);
+      if (!result) {
+        usedFallback = true;
+        result = scoreWithKeywords(prompt);
+      }
     } else {
       await new Promise(r => setTimeout(r, 600));
       result = scoreWithKeywords(prompt);
     }
     renderResult(result);
+    if (usedFallback) {
+      errorBox.className = 'mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700';
+      errorBox.textContent = '요청이 일시적으로 제한되어 키워드 기반 평가로 대체했습니다.';
+    }
   } catch (err) {
     errorBox.textContent = err.message || '평가 중 오류가 발생했습니다. 다시 시도해주세요.';
     errorBox.classList.remove('hidden');
