@@ -162,7 +162,41 @@ AI에게 명확한 페르소나나 전문가 역할을 부여했는가.
 - 부족한 항목은 개선 방향을 예시와 함께 제안한다.
 - 칭찬과 개선점을 균형 있게 작성한다.
 - summary는 전체 프롬프트의 강점 1가지와 핵심 개선 포인트 1가지를 포함한 2~3문장으로 작성한다.
-- 모든 응답은 한국어로 작성한다.`;
+- 모든 응답은 한국어로 작성한다.
+
+## 출력 형식 (반드시 이 JSON 구조만 사용할 것)
+다른 텍스트 없이 아래 JSON만 출력한다. 키 이름을 절대 변경하지 않는다.
+{
+  "scores": { "role": 숫자, "context": 숫자, "instruction": 숫자, "format": 숫자, "constraint": 숫자 },
+  "feedback": { "role": "피드백", "context": "피드백", "instruction": "피드백", "format": "피드백", "constraint": "피드백" },
+  "summary": "종합 피드백"
+}`;
+
+// ── Gemini 응답 정규화 (모델이 다른 구조로 반환할 때 대응) ─
+function normalizeGeminiResult(parsed) {
+  if (!parsed) return null;
+  // 이미 올바른 구조
+  const keys = ['role', 'context', 'instruction', 'format', 'constraint'];
+  if (
+    parsed.scores && keys.every(k => typeof parsed.scores[k] === 'number') &&
+    parsed.feedback && keys.every(k => typeof parsed.feedback[k] === 'string') &&
+    typeof parsed.summary === 'string'
+  ) return parsed;
+
+  // evaluation.R/C/I/F 구조 대응
+  const ev = parsed.evaluation;
+  if (ev) {
+    const map = { role: ev.R, context: ev.C, instruction: ev.I, format: ev.F, constraint: ev.Constraint ?? ev.C2 ?? ev.F2 };
+    const getScore = v => typeof v?.score === 'number' ? v.score : (typeof v?.점수 === 'number' ? v.점수 : 0);
+    const getFeedback = v => typeof v?.feedback === 'string' ? v.feedback : (typeof v?.피드백 === 'string' ? v.피드백 : '');
+    const scores   = Object.fromEntries(keys.map(k => [k, getScore(map[k])]));
+    const feedback = Object.fromEntries(keys.map(k => [k, getFeedback(map[k])]));
+    if (typeof parsed.summary === 'string') return { scores, feedback, summary: parsed.summary };
+  }
+
+  console.error('[Gemini] 정규화 불가:', parsed);
+  return null;
+}
 
 async function scoreWithGemini(prompt, apiKey) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
@@ -205,16 +239,7 @@ async function scoreWithGemini(prompt, apiKey) {
 
   if (!parsed) { console.error('[Gemini] 파싱 실패'); return null; }
 
-  // 구조 검증 — 필수 필드가 없으면 폴백
-  const keys = ['role', 'context', 'instruction', 'format', 'constraint'];
-  const valid =
-    parsed.scores && keys.every(k => typeof parsed.scores[k] === 'number') &&
-    parsed.feedback && keys.every(k => typeof parsed.feedback[k] === 'string') &&
-    typeof parsed.summary === 'string';
-
-  if (!valid) { console.error('[Gemini] 구조 불일치:', parsed); return null; }
-
-  return parsed;
+  return normalizeGeminiResult(parsed);
 }
 
 // ── 키워드 기반 폴백 ─────────────────────────────────────
