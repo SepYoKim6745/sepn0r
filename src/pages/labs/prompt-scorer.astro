@@ -117,47 +117,110 @@ const geminiKey = import.meta.env.PUBLIC_GEMINI_API_KEY ?? '';
 
 <script is:inline>
 // ── Gemini API 평가 ──────────────────────────────────────
+const SYSTEM_INSTRUCTION = `당신은 프롬프트 엔지니어링 교육 전문가입니다.
+수강생이 작성한 프롬프트를 R.C.I.F.C 프레임워크로 평가합니다.
+
+## 평가 항목 및 채점 기준 (각 0~20점)
+
+### R — Role (역할 지정)
+AI에게 명확한 페르소나나 전문가 역할을 부여했는가.
+- 20점: 구체적인 역할 + 전문성 수준까지 지정 (예: "10년 경력의 여행 플래너야")
+- 14점: 역할은 명시했으나 수준이나 맥락 없음 (예: "너는 여행 플래너야")
+- 8점: 역할이 암시되어 있으나 명시적이지 않음
+- 0점: 역할 지정 없음
+
+### C — Context (맥락 제공)
+배경 정보, 상황, 사용자 조건이 충분히 설명되었는가.
+- 20점: 목적 + 대상 + 상황 + 제약이 모두 기술됨
+- 14점: 2~3가지 맥락 요소 포함
+- 8점: 최소한의 맥락만 있음
+- 0점: 맥락 없이 요청만 있음
+
+### I — Instruction (명확한 지시)
+해야 할 작업이 구체적이고 명확하게 기술되었는가.
+- 20점: 작업이 단계별로 구체적이고 측정 가능하게 기술됨
+- 14점: 명확한 동사 + 목적어로 요청이 명시됨
+- 8점: 무엇을 원하는지 파악 가능하나 모호함
+- 0점: 지시가 불분명하거나 없음
+
+### F — Format (출력 형식)
+원하는 결과물의 형식, 길이, 구조를 지정했는가.
+- 20점: 형식 + 길이 + 구조 모두 명시 (예: "표로, 3열, 10행 이내")
+- 14점: 형식 지정 있음 (예: "표로 작성해줘")
+- 8점: 형식이 암시되어 있으나 불명확
+- 0점: 형식 지정 없음
+
+### C — Constraint (제약 조건)
+지켜야 할 조건, 제한, 예외 사항을 명시했는가.
+- 20점: 복수의 구체적 제약 명시 (예: "이동 시간 30분 이내, 예산 1인 5만원")
+- 14점: 1가지 명확한 제약 포함
+- 8점: 제약이 있으나 모호함
+- 0점: 제약 조건 없음
+
+## 피드백 작성 원칙
+- 항목별 피드백은 2~3문장으로, 현재 프롬프트의 구체적인 내용을 언급하며 작성한다.
+- 부족한 항목은 개선 방향을 예시와 함께 제안한다.
+- 칭찬과 개선점을 균형 있게 작성한다.
+- summary는 전체 프롬프트의 강점 1가지와 핵심 개선 포인트 1가지를 포함한 2~3문장으로 작성한다.
+- 모든 응답은 한국어로 작성한다.`;
+
 async function scoreWithGemini(prompt, apiKey) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-  const evalPrompt = `당신은 프롬프트 엔지니어링 평가 전문가입니다.
-아래 프롬프트를 R.C.I.F.C 5가지 기준으로 평가하고, 반드시 JSON 형식으로만 응답하세요.
-
-평가 기준 (각 0~20점):
-- role (R): AI의 역할을 명확히 지정했는가
-- context (C): 충분한 상황/맥락을 제공했는가
-- instruction (I): 해야 할 일을 명확히 지시했는가
-- format (F): 원하는 출력 형식을 지정했는가
-- constraint (C): 지켜야 할 제약 조건이 있는가
-
-응답 형식 (JSON만, 다른 텍스트 금지):
-{
-  "scores": { "role": 숫자, "context": 숫자, "instruction": 숫자, "format": 숫자, "constraint": 숫자 },
-  "feedback": { "role": "한국어 피드백", "context": "한국어 피드백", "instruction": "한국어 피드백", "format": "한국어 피드백", "constraint": "한국어 피드백" },
-  "summary": "종합 피드백 한두 문장"
-}
-
-평가할 프롬프트:
-${prompt}`;
+  const responseSchema = {
+    type: 'OBJECT',
+    properties: {
+      scores: {
+        type: 'OBJECT',
+        properties: {
+          role:        { type: 'INTEGER', minimum: 0, maximum: 20 },
+          context:     { type: 'INTEGER', minimum: 0, maximum: 20 },
+          instruction: { type: 'INTEGER', minimum: 0, maximum: 20 },
+          format:      { type: 'INTEGER', minimum: 0, maximum: 20 },
+          constraint:  { type: 'INTEGER', minimum: 0, maximum: 20 },
+        },
+        required: ['role', 'context', 'instruction', 'format', 'constraint'],
+      },
+      feedback: {
+        type: 'OBJECT',
+        properties: {
+          role:        { type: 'STRING' },
+          context:     { type: 'STRING' },
+          instruction: { type: 'STRING' },
+          format:      { type: 'STRING' },
+          constraint:  { type: 'STRING' },
+        },
+        required: ['role', 'context', 'instruction', 'format', 'constraint'],
+      },
+      summary: { type: 'STRING' },
+    },
+    required: ['scores', 'feedback', 'summary'],
+  };
 
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: evalPrompt }] }],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 600 },
+      systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+      contents: [{ role: 'user', parts: [{ text: `다음 프롬프트를 평가해주세요:\n\n${prompt}` }] }],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 1024,
+        responseMimeType: 'application/json',
+        responseSchema,
+      },
     }),
   });
 
   if (res.status === 429) throw new Error('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
-  if (!res.ok) throw new Error(`API 오류 (${res.status})`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `API 오류 (${res.status})`);
+  }
 
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error('응답 형식 오류');
-
-  return JSON.parse(match[0]);
+  return JSON.parse(text);
 }
 
 // ── 키워드 기반 폴백 ─────────────────────────────────────
