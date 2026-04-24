@@ -188,10 +188,16 @@ async function scoreWithGemini(prompt, apiKey) {
   }
 
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error('응답 형식 오류');
-  return JSON.parse(match[0]);
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  // 마크다운 코드 펜스 제거
+  const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  // 1차: 전체 텍스트 직접 파싱
+  try { return JSON.parse(cleaned); } catch (_) {}
+  // 2차: {...} 블록 추출 후 파싱
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (match) { try { return JSON.parse(match[0]); } catch (_) {} }
+  console.error('[Gemini] 파싱 실패, 원본:', raw);
+  throw new Error('응답 형식 오류');
 }
 
 // ── 키워드 기반 폴백 ─────────────────────────────────────
