@@ -21,6 +21,8 @@ jobs:
         with:
           package-manager: npm@latest
           node-version: 22
+        env:
+          PUBLIC_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
   deploy:
     needs: build

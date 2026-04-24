@@ -3,20 +3,23 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import { getCollection } from 'astro:content';
 
 const allLabs = await getCollection('labs');
-const baseURL = import.meta.env.BASE_URL;
+const geminiKey = import.meta.env.PUBLIC_GEMINI_API_KEY ?? '';
 ---
 
 <DocsLayout
   title="프롬프트 점수 측정기 — sepn0r"
   description="R.C.I.F.C 기준으로 프롬프트를 평가하고 점수를 확인하세요."
   allLabs={allLabs}
-  currentId=""
+  currentId="prompt-scorer"
 >
+  <!-- API 키를 data 속성으로 전달 -->
+  <div id="app-config" data-gemini-key={geminiKey} hidden></div>
+
   <article>
     <header class="mb-8">
       <h1 class="text-3xl font-bold tracking-tight">프롬프트 점수 측정기</h1>
       <p class="mt-2 text-neutral-500">
-        작성한 프롬프트를 입력하면 <strong>R.C.I.F.C</strong> 기준으로 평가하고 점수를 알려드립니다.
+        작성한 프롬프트를 입력하면 <strong>R.C.I.F.C</strong> 기준으로 AI가 평가하고 점수를 알려드립니다.
       </p>
     </header>
 
@@ -46,10 +49,11 @@ const baseURL = import.meta.env.BASE_URL;
       </div>
     </div>
 
+    <!-- 에러 메시지 -->
+    <div id="error-box" class="hidden mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"></div>
+
     <!-- 결과 영역 -->
     <div id="result" class="hidden mt-10 space-y-6">
-
-      <!-- 구분선 -->
       <div class="border-t border-neutral-200"></div>
 
       <!-- 총점 -->
@@ -70,11 +74,11 @@ const baseURL = import.meta.env.BASE_URL;
       <!-- 항목별 점수 -->
       <div class="rounded-lg border border-neutral-200 divide-y divide-neutral-100 overflow-hidden">
         {[
-          { key: 'role',       label: 'R — Role',        desc: '누구처럼 답할지 (역할 지정)' },
-          { key: 'context',    label: 'C — Context',     desc: '어떤 상황인지 (맥락 제공)' },
-          { key: 'instruction',label: 'I — Instruction', desc: '무엇을 해야 하는지 (지시)' },
-          { key: 'format',     label: 'F — Format',      desc: '어떤 형식으로 출력할지' },
-          { key: 'constraint', label: 'C — Constraint',  desc: '지켜야 할 조건 / 제약' },
+          { key: 'role',        label: 'R — Role',        desc: '누구처럼 답할지 (역할 지정)' },
+          { key: 'context',     label: 'C — Context',     desc: '어떤 상황인지 (맥락 제공)' },
+          { key: 'instruction', label: 'I — Instruction', desc: '무엇을 해야 하는지 (지시)' },
+          { key: 'format',      label: 'F — Format',      desc: '어떤 형식으로 출력할지' },
+          { key: 'constraint',  label: 'C — Constraint',  desc: '지켜야 할 조건 / 제약' },
         ].map(item => (
           <div class="px-4 py-3">
             <div class="flex items-center justify-between mb-1.5">
@@ -99,16 +103,12 @@ const baseURL = import.meta.env.BASE_URL;
       </div>
 
       <!-- 종합 피드백 -->
-      <div id="summary-box" class="rounded-lg bg-neutral-50 border border-neutral-200 px-4 py-3">
+      <div class="rounded-lg bg-neutral-50 border border-neutral-200 px-4 py-3">
         <p class="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">종합 피드백</p>
         <p id="summary-text" class="text-sm text-neutral-700 leading-relaxed"></p>
       </div>
 
-      <!-- 다시 평가 -->
-      <button
-        id="reset-btn"
-        class="text-sm text-neutral-400 hover:text-neutral-700 transition-colors"
-      >
+      <button id="reset-btn" class="text-sm text-neutral-400 hover:text-neutral-700 transition-colors">
         ↩ 다시 입력하기
       </button>
     </div>
@@ -116,137 +116,119 @@ const baseURL = import.meta.env.BASE_URL;
 </DocsLayout>
 
 <script is:inline>
-// ─────────────────────────────────────────────
-// 평가 엔진
-// TODO: 아래 scoreWithKeywords() 함수를 LLM API 호출로 교체한다.
-//       예: Gemini API / Claude API 등을 이용해 각 항목별 점수와 피드백을 받아온다.
-//       반환 형식은 동일하게 유지하면 된다.
-// ─────────────────────────────────────────────
+// ── Gemini API 평가 ──────────────────────────────────────
+async function scoreWithGemini(prompt, apiKey) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
+  const evalPrompt = `당신은 프롬프트 엔지니어링 평가 전문가입니다.
+아래 프롬프트를 R.C.I.F.C 5가지 기준으로 평가하고, 반드시 JSON 형식으로만 응답하세요.
+
+평가 기준 (각 0~20점):
+- role (R): AI의 역할을 명확히 지정했는가
+- context (C): 충분한 상황/맥락을 제공했는가
+- instruction (I): 해야 할 일을 명확히 지시했는가
+- format (F): 원하는 출력 형식을 지정했는가
+- constraint (C): 지켜야 할 제약 조건이 있는가
+
+응답 형식 (JSON만, 다른 텍스트 금지):
+{
+  "scores": { "role": 숫자, "context": 숫자, "instruction": 숫자, "format": 숫자, "constraint": 숫자 },
+  "feedback": { "role": "한국어 피드백", "context": "한국어 피드백", "instruction": "한국어 피드백", "format": "한국어 피드백", "constraint": "한국어 피드백" },
+  "summary": "종합 피드백 한두 문장"
+}
+
+평가할 프롬프트:
+${prompt}`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: evalPrompt }] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 600 },
+    }),
+  });
+
+  if (res.status === 429) throw new Error('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+  if (!res.ok) throw new Error(`API 오류 (${res.status})`);
+
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('응답 형식 오류');
+
+  return JSON.parse(match[0]);
+}
+
+// ── 키워드 기반 폴백 ─────────────────────────────────────
 function scoreWithKeywords(prompt) {
   const p = prompt;
-  const pl = prompt.toLowerCase();
+  const toScore = (matched, max) => Math.min(20, Math.round((matched / max) * 20));
 
-  // R — Role: 역할 지정 키워드
-  const rolePatterns = [
+  const roleMatches = [
     /너는|당신은|you are/i,
     /전문가|플래너|코치|강사|선생|컨설턴트|분석가|작가|디자이너|개발자|의사|변호사|상담사|매니저|크리에이터/,
-    /~야|~입니다|로서|로서의|입장에서/,
-  ];
-  const roleScore = rolePatterns.filter(r => r.test(p)).length;
+  ].filter(r => r.test(p)).length;
 
-  // C — Context: 맥락 제공 (상황, 배경, 대상)
-  const contextPatterns = [
+  const contextMatches = [
     /\d+명|\d+박\s*\d+일|\d+일|\d+시간|\d+주|\d+달|\d+개월/,
     /나는|제가|우리|저는|친구|부모님|팀원|회사|학교|직장/,
     /현재|지금|요즘|최근|이번|다음|올해|작년/,
-    /왜냐면|때문에|상황은|배경은|목적은/,
-    p.length > 80 ? true : false,  // 길이 기반 휴리스틱
-  ];
-  const contextScore = contextPatterns.filter(r => typeof r === 'boolean' ? r : r.test(p)).length;
+    p.length > 80,
+  ].filter(r => typeof r === 'boolean' ? r : r.test(p)).length;
 
-  // I — Instruction: 명확한 지시
-  const instructionPatterns = [
-    /써줘|써주세요|작성해|작성해줘/i,
-    /만들어|만들어줘|만들어주세요/i,
-    /알려줘|알려주세요|추천해|추천해줘/i,
-    /분석해|분석해줘|설명해|설명해줘/i,
-    /짜줘|정리해|요약해|비교해|평가해/i,
-  ];
-  const instructionScore = instructionPatterns.filter(r => r.test(p)).length;
+  const instrMatches = [
+    /써줘|써주세요|작성해/i,
+    /만들어|만들어줘/i,
+    /알려줘|추천해|분석해|설명해|짜줘|정리해|요약해|비교해/i,
+  ].filter(r => r.test(p)).length;
 
-  // F — Format: 출력 형식 지정
-  const formatPatterns = [
+  const formatMatches = [
     /표로|테이블로|목록으로|리스트로/,
-    /번호|번호로|단계별|순서대로/,
-    /\d+문단|\d+줄|\d+개|\d+자 이내|\d+자 내외/,
-    /형식|형태|구조|포맷|틀|양식/,
-    /오전.오후.저녁|아침.점심.저녁|날짜별|항목별|분류별/,
-  ];
-  const formatScore = formatPatterns.filter(r => r.test(p)).length;
+    /번호|단계별|순서대로/,
+    /\d+자 이내|\d+자 내외|\d+문단|\d+줄|\d+개/,
+    /형식|형태|구조|포맷/,
+  ].filter(r => r.test(p)).length;
 
-  // C — Constraint: 제약 조건
-  const constraintPatterns = [
+  const constraintMatches = [
     /이내|이하|이상|초과|미만/,
-    /금지|빼고|제외|빼줘|넣지 마/,
-    /반드시|꼭|무조건|절대/,
-    /고려해|고려해줘|주의해|주의해줘/,
-    /않게|않도록|안 되게|넘지 않/,
-  ];
-  const constraintScore = constraintPatterns.filter(r => r.test(p)).length;
-
-  // 점수 환산 (각 항목 최대 20점)
-  const toScore = (matched, max) => Math.min(20, Math.round((matched / max) * 20));
+    /금지|빼고|제외|빼줘/,
+    /반드시|꼭|무조건/,
+    /고려해|주의해|않게|않도록|넘지 않/,
+  ].filter(r => r.test(p)).length;
 
   const scores = {
-    role:        toScore(roleScore, 2),
-    context:     toScore(contextScore, 3),
-    instruction: toScore(instructionScore, 2),
-    format:      toScore(formatScore, 2),
-    constraint:  toScore(constraintScore, 2),
+    role:        toScore(roleMatches, 2),
+    context:     toScore(contextMatches, 3),
+    instruction: toScore(instrMatches, 2),
+    format:      toScore(formatMatches, 2),
+    constraint:  toScore(constraintMatches, 2),
   };
 
-  // 피드백
+  const fb = (s, good, mid, bad) => s >= 16 ? good : s >= 8 ? mid : bad;
   const feedback = {
-    role: scores.role >= 16
-      ? '역할이 명확하게 지정되어 있습니다.'
-      : scores.role >= 8
-      ? '역할이 일부 언급되어 있지만 더 구체적으로 지정해보세요.'
-      : '역할을 지정하지 않았습니다. "너는 ~야" 형태로 AI의 역할을 설정하면 더 좋은 답변을 얻을 수 있어요.',
-
-    context: scores.context >= 16
-      ? '충분한 맥락과 배경 정보가 포함되어 있습니다.'
-      : scores.context >= 8
-      ? '맥락이 일부 있지만, 상황을 더 구체적으로 설명하면 좋겠습니다.'
-      : '맥락이 부족합니다. 누가, 어떤 상황에서, 왜 필요한지 추가해보세요.',
-
-    instruction: scores.instruction >= 16
-      ? '원하는 작업이 명확하게 전달되었습니다.'
-      : scores.instruction >= 8
-      ? '지시가 있지만 더 구체적으로 무엇을 해야 하는지 명시해보세요.'
-      : '지시(Instruction)가 불명확합니다. "~해줘", "~작성해줘" 등으로 명확히 요청하세요.',
-
-    format: scores.format >= 16
-      ? '출력 형식이 잘 지정되어 있습니다.'
-      : scores.format >= 8
-      ? '형식이 일부 언급되어 있습니다. 더 구체적으로 지정하면 좋겠습니다.'
-      : '출력 형식이 없습니다. "표로", "번호로", "~자 이내" 등 원하는 형식을 지정해보세요.',
-
-    constraint: scores.constraint >= 16
-      ? '제약 조건이 잘 설정되어 있습니다.'
-      : scores.constraint >= 8
-      ? '제약이 일부 있습니다. 더 추가하면 답변 품질이 올라갑니다.'
-      : '제약 조건이 없습니다. "~이내", "~빼고", "~고려해줘" 등 지켜야 할 조건을 추가해보세요.',
+    role:        fb(scores.role, '역할이 명확하게 지정되어 있습니다.', '역할이 일부 언급됐지만 더 구체적으로 지정해보세요.', '"너는 ~야" 형태로 AI의 역할을 설정해보세요.'),
+    context:     fb(scores.context, '충분한 맥락과 배경 정보가 포함되어 있습니다.', '맥락이 일부 있지만 상황을 더 구체적으로 설명해보세요.', '누가, 어떤 상황에서, 왜 필요한지 추가해보세요.'),
+    instruction: fb(scores.instruction, '원하는 작업이 명확하게 전달되었습니다.', '지시가 있지만 더 구체적으로 무엇을 해야 하는지 명시해보세요.', '"~해줘", "~작성해줘" 등으로 명확히 요청하세요.'),
+    format:      fb(scores.format, '출력 형식이 잘 지정되어 있습니다.', '형식이 일부 언급되어 있습니다. 더 구체적으로 지정해보세요.', '"표로", "번호로", "~자 이내" 등 원하는 형식을 지정해보세요.'),
+    constraint:  fb(scores.constraint, '제약 조건이 잘 설정되어 있습니다.', '제약이 일부 있습니다. 더 추가하면 좋겠습니다.', '"~이내", "~빼고", "~고려해줘" 등 제약 조건을 추가해보세요.'),
   };
 
-  return { scores, feedback };
+  const missing = Object.entries(scores).filter(([, s]) => s < 10).map(([k]) => ({ role: '역할(R)', context: '맥락(C)', instruction: '지시(I)', format: '형식(F)', constraint: '제약(C)' }[k]));
+  const summary = missing.length === 0
+    ? '훌륭합니다! R.C.I.F.C 5가지 요소를 모두 활용한 완성도 높은 프롬프트입니다.'
+    : `${missing.join(', ')} 요소가 부족합니다. 해당 항목을 보강하면 더 좋은 답변을 얻을 수 있어요.`;
+
+  return { scores, feedback, summary };
 }
 
-// ─────────────────────────────────────────────
-// UI 제어
-// ─────────────────────────────────────────────
-
-const input   = document.getElementById('prompt-input');
-const charCount = document.getElementById('char-count');
-const btn     = document.getElementById('evaluate-btn');
-const btnText = document.getElementById('btn-text');
-const spinner = document.getElementById('btn-spinner');
-const result  = document.getElementById('result');
-const resetBtn = document.getElementById('reset-btn');
-
-// 글자 수 카운트
-input.addEventListener('input', () => {
-  charCount.textContent = `${input.value.length}자`;
-});
-
-// 바 색상: 점수에 따라
+// ── UI 유틸 ──────────────────────────────────────────────
 function barColor(score) {
   if (score >= 16) return 'bg-neutral-800';
   if (score >= 8)  return 'bg-neutral-400';
   return 'bg-neutral-200';
 }
 
-// 총점 라벨
 function scoreLabel(total) {
   if (total >= 90) return { label: '완성도 높은 프롬프트', desc: '5가지 요소를 모두 잘 활용했습니다.' };
   if (total >= 70) return { label: '좋은 프롬프트', desc: '대부분의 요소가 포함되어 있습니다.' };
@@ -255,51 +237,7 @@ function scoreLabel(total) {
   return { label: '기초 프롬프트', desc: '역할, 맥락, 형식 등을 추가해보세요.' };
 }
 
-// 종합 피드백 문장
-function buildSummary(scores, total) {
-  const missing = [];
-  if (scores.role        < 10) missing.push('역할(R)');
-  if (scores.context     < 10) missing.push('맥락(C)');
-  if (scores.instruction < 10) missing.push('지시(I)');
-  if (scores.format      < 10) missing.push('형식(F)');
-  if (scores.constraint  < 10) missing.push('제약(C)');
-
-  if (missing.length === 0) return '훌륭합니다! R.C.I.F.C 5가지 요소를 모두 활용한 완성도 높은 프롬프트입니다.';
-  return `${missing.join(', ')} 요소가 부족합니다. 해당 항목을 보강하면 AI로부터 더 정확하고 유용한 답변을 얻을 수 있어요.`;
-}
-
-// 평가 실행
-async function evaluate() {
-  const prompt = input.value.trim();
-  if (!prompt) {
-    input.focus();
-    return;
-  }
-
-  // 로딩 상태
-  btn.disabled = true;
-  btnText.textContent = '평가 중...';
-  spinner.classList.remove('hidden');
-
-  // ── TODO: LLM API 호출로 교체할 지점 ──────────────────────────
-  // const response = await fetch('https://api.example.com/score', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ prompt }),
-  // });
-  // const { scores, feedback } = await response.json();
-  // ──────────────────────────────────────────────────────────────
-
-  // 현재는 키워드 기반 목업 스코어링
-  await new Promise(r => setTimeout(r, 600)); // UX용 딜레이
-  const { scores, feedback } = scoreWithKeywords(prompt);
-
-  // 로딩 해제
-  btn.disabled = false;
-  btnText.textContent = '평가하기';
-  spinner.classList.add('hidden');
-
-  // 결과 표시
+function renderResult({ scores, feedback, summary }) {
   const total = Object.values(scores).reduce((a, b) => a + b, 0);
   document.getElementById('total-score').textContent = total;
 
@@ -307,8 +245,7 @@ async function evaluate() {
   document.getElementById('score-label').textContent = label;
   document.getElementById('score-desc').textContent  = desc;
 
-  const criteria = ['role', 'context', 'instruction', 'format', 'constraint'];
-  criteria.forEach(key => {
+  ['role', 'context', 'instruction', 'format', 'constraint'].forEach(key => {
     const s = scores[key];
     document.getElementById(`score-${key}`).textContent = `${s} / 20`;
     const bar = document.getElementById(`bar-${key}`);
@@ -317,24 +254,62 @@ async function evaluate() {
     document.getElementById(`feedback-${key}`).textContent = feedback[key];
   });
 
-  document.getElementById('summary-text').textContent = buildSummary(scores, total);
+  document.getElementById('summary-text').textContent = summary;
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-  result.classList.remove('hidden');
-  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// ── 메인 로직 ────────────────────────────────────────────
+const GEMINI_KEY = document.getElementById('app-config')?.dataset.geminiKey ?? '';
+
+const input    = document.getElementById('prompt-input');
+const charCount = document.getElementById('char-count');
+const btn      = document.getElementById('evaluate-btn');
+const btnText  = document.getElementById('btn-text');
+const spinner  = document.getElementById('btn-spinner');
+const errorBox = document.getElementById('error-box');
+const resetBtn = document.getElementById('reset-btn');
+
+input.addEventListener('input', () => {
+  charCount.textContent = `${input.value.length}자`;
+});
+
+async function evaluate() {
+  const prompt = input.value.trim();
+  if (!prompt) { input.focus(); return; }
+
+  btn.disabled = true;
+  btnText.textContent = '평가 중...';
+  spinner.classList.remove('hidden');
+  errorBox.classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+
+  try {
+    let result;
+    if (GEMINI_KEY) {
+      result = await scoreWithGemini(prompt, GEMINI_KEY);
+    } else {
+      await new Promise(r => setTimeout(r, 600));
+      result = scoreWithKeywords(prompt);
+    }
+    renderResult(result);
+  } catch (err) {
+    errorBox.textContent = err.message || '평가 중 오류가 발생했습니다. 다시 시도해주세요.';
+    errorBox.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = '평가하기';
+    spinner.classList.add('hidden');
+  }
 }
 
 btn.addEventListener('click', evaluate);
-
-// 리셋
+input.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') evaluate(); });
 resetBtn.addEventListener('click', () => {
   input.value = '';
   charCount.textContent = '0자';
-  result.classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  errorBox.classList.add('hidden');
   input.focus();
-});
-
-// Enter(Ctrl+Enter)로 평가
-input.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') evaluate();
 });
 </script>
