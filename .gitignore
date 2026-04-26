@@ -3,5 +3,4 @@ dist/
 .astro/
 .omc/
 .DS_Store
-docs/
 .claude/settings.local.json
