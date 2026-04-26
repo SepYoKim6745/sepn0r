@@ -36,20 +36,20 @@ z.object({
 ## File Naming Rules
 
 - Lab files must match the glob pattern `**/[^_]*.md` (files starting with `_` are excluded).
-- The file's base name (without extension) becomes the `entry.id` used in the URL: `src/data/labs/hello-python.md` → `/labs/hello-python/`.
+- The file's base name (without extension) becomes the `entry.id` used in the URL: `src/data/labs/python-print.md` → `/labs/python-print/`.
 - File names should use lowercase kebab-case for consistent, predictable URLs.
 
 ## Validation Examples
 
-**Valid entry (`hello-python.md`):**
+**Valid entry (`python-print.md`):**
 ```yaml
 ---
-title: "Python 기초: Hello World부터 시작하기"
-description: "Python 개발 환경 설정부터 첫 번째 프로그램 작성까지 단계별로 알아봅니다."
-pubDate: 2026-04-20
-tags: ["Python", "입문"]
-playgroundUrl: "https://codesandbox.io/p/sandbox/python-hello"
-featured: true
+title: "Python 출력문: print() 함수 마스터하기"
+description: "Python의 print() 함수를 사용해 다양한 출력 방법을 배웁니다."
+pubDate: 2026-04-26
+tags: ["Python", "출력문"]
+category: "Python"
+order: 2
 ---
 ```
 

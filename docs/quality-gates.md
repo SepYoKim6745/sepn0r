@@ -24,7 +24,7 @@ After build, verify every expected HTML output exists in `dist/`. Current conten
 |---|---|---|
 | 1 | `dist/index.html` | `src/pages/index.astro` |
 | 2 | `dist/labs/index.html` | `src/pages/labs/index.astro` |
-| 3 | `dist/labs/hello-python/index.html` | `src/data/labs/hello-python.md` |
+| 3 | `dist/labs/python-print/index.html` | `src/data/labs/python-print.md` |
 | 4 | `dist/labs/git-basics/index.html` | `src/data/labs/git-basics.md` |
 | 5 | `dist/portfolio/index.html` | `src/pages/portfolio/index.astro` |
 | 6 | `dist/portfolio/sample-project/index.html` | `src/data/portfolio/sample-project.md` |
