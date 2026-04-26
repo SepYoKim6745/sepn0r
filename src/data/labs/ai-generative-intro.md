@@ -5,6 +5,7 @@ pubDate: 2026-04-26
 tags: ["AI", "생성형 AI", "이론"]
 category: "생성형 AI 활용"
 downloadFile: "generative-ai-understanding.pdf"
+downloadLabel: "교재 다운로드"
 ---
 
 ## 학습 목표

@@ -68,7 +68,7 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
             download
             class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
           >
-            다운로드 &darr;
+            {entry.data.downloadLabel || '다운로드'} &darr;
           </a>
         )}
       </div>

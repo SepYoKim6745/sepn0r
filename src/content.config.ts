@@ -12,6 +12,7 @@ const labs = defineCollection({
     category: z.string().default('기타'),
     playgroundUrl: z.string().url().optional(),
     downloadFile: z.string().optional(),
+    downloadLabel: z.string().optional(),
     order: z.number().optional(),
     featured: z.boolean().default(false),
   }),
