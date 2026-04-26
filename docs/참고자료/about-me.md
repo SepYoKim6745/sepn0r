@@ -56,10 +56,17 @@
 
 2025.03 ~ 현재 | 석사 과정 | 컴퓨터공학과 | [Next Generation Network(NGN) Lab](https://ngnlab.koreatech.ac.kr/)
 
-**학회/논문:**
-- [IEEE i-CoSTe 2024] A Study on Object Detection Performance through Data Augmentation under Adverse Weather Conditions (YoSep Kim, ByeongJu Park, Il-Young Moon)
-- 한국정보통신학회: 2025 여성ICT 위원회 & 한국인공지능윤리학회 공동 학술 대회
-- 한국항행학회: KCI
+**학회/논문 (7편):**
+
+| 연도 | 학회 | 유형 | 제목 | 비고 |
+|------|------|------|------|------|
+| 2026.02 | 한국항행학회 | KCI 논문지 | CLIP 기반 검색 시스템을 위한 사후 임베딩 PCA 경량화 연구 | J. Adv. Navig. Technol. 30(1) |
+| 2025 | 한국항행학회 | 학술대회 | 항공영상 캡셔닝에서 연산 데이터 타입별 성능-자원 효율성 비교 | Qwen2.5-VL, RSICD |
+| 2025 | 한국정보통신학회 | 학술대회 | 비전-언어 모델(VLM) 연구에서 한국어 자원의 중요성과 기술 분석 | CLIP, KoLLaVA, VARCO-VISION |
+| 2024.12 | 한국항행학회 | KCI 논문지 | 강화학습 기반 자율주행 시스템에서 GAN 기반 데이터 증강 연구 | J. Adv. Navig. Technol. 28(6) |
+| 2024.10 | 한국항행학회 | 학술대회 | GAN기반 데이터 증강을 통한 복잡한 환경에서의 객체 인식 성능 개선 연구 | **우수 논문상** |
+| 2024 | 한국실천공학교육학회 | 학술대회 | 지역별 데이터셋을 활용한 자율주행 객체 인식 모델 성능의 비교 분석 | YOLOv8, AIHUB, BDD100K |
+| 2024 | IEEE i-CoSTe | 국제학회 | A Study on Object Detection Performance through Data Augmentation under Adverse Weather Conditions | YOLOv8, Faster R-CNN, SSD |
 
 **프로젝트:**
 - [안전관리팀] Koreatech Security Agent
