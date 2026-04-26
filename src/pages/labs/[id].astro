@@ -64,7 +64,7 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
         )}
         {entry.data.downloadFile && (
           <a
-            href={`/downloads/${entry.data.downloadFile}`}
+            href={`${baseURL}/downloads/${entry.data.downloadFile}`}
             download
             class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
           >
