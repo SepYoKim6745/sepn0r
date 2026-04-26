@@ -5,6 +5,8 @@ pubDate: 2026-04-24
 tags: ["AI", "프롬프트 엔지니어링", "입문"]
 category: "생성형 AI 활용"
 featured: true
+downloadFile: "prompt-engineering-guide.pdf"
+downloadLabel: "교재 다운로드"
 ---
 
 ## 실습 전 체크리스트
