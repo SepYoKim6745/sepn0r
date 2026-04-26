@@ -4,7 +4,7 @@ description: "open() 함수와 with문을 사용해 파일을 읽고 쓰는 방�
 pubDate: 2026-04-26
 tags: ["Python", "파일입출력"]
 category: "Python"
-order: 9
+order: 10
 ---
 
 ## 1. 파일 열기

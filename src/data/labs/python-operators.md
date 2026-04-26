@@ -4,7 +4,7 @@ description: "비교 연산자를 사용해 두 값을 비교하고 True/False�
 pubDate: 2026-04-26
 tags: ["Python", "연산자"]
 category: "Python"
-order: 3
+order: 4
 ---
 
 ## 1. 비교 연산자란?

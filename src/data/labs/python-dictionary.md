@@ -4,7 +4,7 @@ description: "딕셔너리의 생성, 접근, 수정, 삭제와 반복문 활용
 pubDate: 2026-04-26
 tags: ["Python", "자료구조"]
 category: "Python"
-order: 10
+order: 9
 ---
 
 ## 1. 딕셔너리란?

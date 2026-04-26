@@ -20,7 +20,20 @@
       "Bash(find /Users/kim-yosep/Desktop/sepn0r/dist -name \"*.css\" -exec wc -c {} \\\\;)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ls:*)",
+      "Bash(pdftoppm -v)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2024/09/PF_i-coste-2024_1122.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2024/10/항행학회/논문지/강화학습기반자율주행시스템에서GAN기반데이터증강연구.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2024/10/항행학회/학술대회/GAN기반 데이터 증강을 통한 복잡한 환경에서의 객체 인식 성능 개선.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2024/10/한국실천공학교육학회/2024종합학술발표대회/지역별 데이터셋을 활용한 자율주행 객체 인식 모델 성능의 비교 분석.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2025/01_학회/06/정보통신학회/비전-언어 모델\\(VLM\\) 연구에서 한국어 자원의 중요성과 기술 분석.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2025/01_학회/10/한국항행학회/01_논문/항공영상 캡셔닝에서 연산 데이터 타입별 성능-자원 효율성 비교_김요셉.pdf\" -)",
+      "Bash(pdftotext \"/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/01_학교/3. 한국기술교육대학원/2. 활동/2026/한국항행학회/30_1_1 김요셉.pdf\" -)",
+      "Bash(brew install:*)",
+      "Bash(python3:*)",
+      "Bash(/opt/homebrew/bin/pdftotext '/Users/kim-yosep/Library/CloudStorage/GoogleDrive-gkfhak123@gmail.com/다른 컴퓨터/내 컴퓨터/H:/02_강의/02_개인/한국직업전문학교/02_생성형 AI 기반 업무혁신/02_강의안/[한국직업전문학교] 생성형 AI의 이해.pdf' -)",
+      "Bash(grep -v '^$')"
     ]
   }
 }

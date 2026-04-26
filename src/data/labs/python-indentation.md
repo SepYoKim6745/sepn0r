@@ -4,7 +4,7 @@ description: "Python에서 들여쓰기가 왜 중요한지, 올바른 들여쓰
 pubDate: 2026-04-26
 tags: ["Python", "문법"]
 category: "Python"
-order: 4
+order: 3
 ---
 
 ## 1. 들여쓰기란?
