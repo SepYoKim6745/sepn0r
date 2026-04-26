@@ -16,19 +16,19 @@ const baseURL = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={`${entry.data.title} — sepn0r`} description={entry.data.description}>
-  <article>
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-tight">{entry.data.title}</h1>
-      <p class="mt-2 text-neutral-500">{entry.data.description}</p>
+  <article class="fade-in">
+    <header class="mb-10">
       {entry.data.tags.length > 0 && (
-        <div class="mt-3 flex gap-1.5">
+        <div class="flex gap-1.5 mb-4">
           {entry.data.tags.map((tag) => (
-            <span class="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-600">
+            <span class="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-500">
               {tag}
             </span>
           ))}
         </div>
       )}
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">{entry.data.title}</h1>
+      <p class="mt-3 text-lg text-neutral-500 leading-relaxed">{entry.data.description}</p>
     </header>
 
     <div class="prose prose-neutral max-w-none">
@@ -36,14 +36,24 @@ const baseURL = import.meta.env.BASE_URL;
     </div>
 
     {(entry.data.liveUrl || entry.data.repoUrl) && (
-      <div class="mt-8 flex gap-3">
+      <div class="mt-10 flex flex-wrap gap-3">
         {entry.data.liveUrl && (
-          <a href={entry.data.liveUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 transition-colors">
+          <a
+            href={entry.data.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-700 hover:shadow-lg hover:shadow-neutral-300/30"
+          >
             Live Demo &nearr;
           </a>
         )}
         {entry.data.repoUrl && (
-          <a href={entry.data.repoUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
+          <a
+            href={entry.data.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
+          >
             GitHub &nearr;
           </a>
         )}
@@ -51,8 +61,11 @@ const baseURL = import.meta.env.BASE_URL;
     )}
   </article>
 
-  <div class="mt-12 pt-8 border-t border-neutral-200">
-    <a href={`${baseURL}/portfolio/`} class="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
+  <div class="mt-16 pt-8 border-t border-neutral-200/60 fade-in fade-in-delay-1">
+    <a
+      href={`${baseURL}/portfolio/`}
+      class="text-sm text-neutral-400 transition-colors hover:text-neutral-900"
+    >
       &larr; 모든 포트폴리오
     </a>
   </div>

@@ -32,54 +32,59 @@ const baseURL = import.meta.env.BASE_URL;
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-white text-neutral-900 font-sans antialiased">
-    <div class="mx-auto max-w-3xl px-6">
-      <slot name="nav">
-        <nav class="flex items-center justify-between py-8">
-          <a href={baseURL} class="text-lg font-bold tracking-tight">sepn0r</a>
+    <!-- Frosted glass nav -->
+    <slot name="nav">
+      <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+        <div class="mx-auto max-w-5xl px-6 flex items-center justify-between h-14">
+          <a href={baseURL} class="text-base font-semibold tracking-tight transition-opacity hover:opacity-60">
+            sepn0r
+          </a>
           <button
             id="menu-toggle"
-            class="sm:hidden p-2 -mr-2"
+            class="sm:hidden p-2 -mr-2 rounded-lg transition-colors hover:bg-neutral-100"
             aria-label="메뉴 열기"
             aria-expanded="false"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
             </svg>
           </button>
-          <ul class="hidden sm:flex gap-6 text-sm font-medium text-neutral-600">
-            <li><a href={`${baseURL}/labs/`} class="hover:text-neutral-900 transition-colors">Labs</a></li>
-            <li><a href={`${baseURL}/portfolio/`} class="hover:text-neutral-900 transition-colors">Portfolio</a></li>
-            <li><a href={`${baseURL}/about/`} class="hover:text-neutral-900 transition-colors">About</a></li>
+          <ul class="hidden sm:flex items-center gap-8 text-sm text-neutral-500">
+            <li><a href={`${baseURL}/labs/`} class="transition-colors hover:text-neutral-900">Labs</a></li>
+            <li><a href={`${baseURL}/portfolio/`} class="transition-colors hover:text-neutral-900">Portfolio</a></li>
+            <li><a href={`${baseURL}/about/`} class="transition-colors hover:text-neutral-900">About</a></li>
           </ul>
-        </nav>
-
-        <!-- Mobile menu -->
-        <div
-          id="mobile-menu"
-          class="fixed inset-0 z-50 bg-white hidden flex-col items-center justify-center gap-8"
-        >
-          <button
-            id="menu-close"
-            class="absolute top-8 right-6 p-2"
-            aria-label="메뉴 닫기"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <a href={baseURL} class="text-2xl font-medium">Home</a>
-          <a href={`${baseURL}/labs/`} class="text-2xl font-medium">Labs</a>
-          <a href={`${baseURL}/portfolio/`} class="text-2xl font-medium">Portfolio</a>
-          <a href={`${baseURL}/about/`} class="text-2xl font-medium">About</a>
         </div>
-      </slot>
+      </nav>
 
-      <main class="py-8">
+      <!-- Mobile menu overlay -->
+      <div
+        id="mobile-menu"
+        class="fixed inset-0 z-50 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center gap-6"
+      >
+        <button
+          id="menu-close"
+          class="absolute top-4 right-5 p-2 rounded-lg transition-colors hover:bg-neutral-100"
+          aria-label="메뉴 닫기"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <a href={baseURL} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Home</a>
+        <a href={`${baseURL}/labs/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Labs</a>
+        <a href={`${baseURL}/portfolio/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Portfolio</a>
+        <a href={`${baseURL}/about/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">About</a>
+      </div>
+    </slot>
+
+    <div class="mx-auto max-w-5xl px-6">
+      <main class="py-12 sm:py-16">
         <slot />
       </main>
 
-      <footer class="border-t border-neutral-200 py-8 mt-16 text-sm text-neutral-400 text-center">
-        <p>&copy; {new Date().getFullYear()} sepn0r. All rights reserved.</p>
+      <footer class="border-t border-neutral-200/60 py-8 text-xs text-neutral-400 text-center tracking-wide">
+        <p>&copy; {new Date().getFullYear()} sepn0r</p>
       </footer>
     </div>
 

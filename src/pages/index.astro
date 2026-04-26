@@ -15,26 +15,46 @@ const labsToShow = featuredLabs.length > 0 ? featuredLabs : recentLabs;
 ---
 
 <BaseLayout title="sepn0r — 개발자 & 강사">
-  <section class="py-16">
-    <h1 class="text-4xl font-bold tracking-tight">안녕하세요,<br /><span class="text-neutral-500">sepn0r</span>입니다.</h1>
-    <p class="mt-4 text-lg text-neutral-500 max-w-xl">
+  <!-- Hero -->
+  <section class="pt-12 pb-20 sm:pt-20 sm:pb-28 fade-in">
+    <p class="text-sm font-medium text-neutral-400 tracking-widest uppercase">Developer & Instructor</p>
+    <h1 class="mt-4 text-5xl sm:text-6xl font-bold tracking-tight leading-[1.1]">
+      안녕하세요,<br />
+      <span class="text-neutral-400">sepn0r</span>입니다.
+    </h1>
+    <p class="mt-6 text-lg sm:text-xl text-neutral-500 max-w-2xl leading-relaxed">
       개발자이자 강사로서 실습 자료와 프로젝트를 공유합니다.
     </p>
-    <div class="mt-8 flex gap-4">
-      <a href={`${baseURL}/labs/`} class="inline-flex items-center rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 transition-colors">
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a
+        href={`${baseURL}/labs/`}
+        class="inline-flex items-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition-all duration-200 hover:bg-neutral-700 hover:shadow-lg hover:shadow-neutral-300/30"
+      >
         실습 자료 보기
       </a>
-      <a href={`${baseURL}/about/`} class="inline-flex items-center rounded-lg border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors">
+      <a
+        href={`${baseURL}/about/`}
+        class="inline-flex items-center rounded-full border border-neutral-300 px-6 py-3 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
+      >
         소개
       </a>
     </div>
   </section>
 
+  <!-- Featured / Recent labs -->
   {labsToShow.length > 0 && (
-    <section class="pb-16">
-      <h2 class="text-xl font-semibold mb-6">
-        {featuredLabs.length > 0 ? '추천 실습 자료' : '최근 실습 자료'}
-      </h2>
+    <section class="pb-20 sm:pb-28 fade-in fade-in-delay-2">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">
+          {featuredLabs.length > 0 ? '추천 실습 자료' : '최근 실습 자료'}
+        </h2>
+        <a
+          href={`${baseURL}/labs/`}
+          class="text-sm text-neutral-400 transition-colors hover:text-neutral-900"
+        >
+          모두 보기 &rarr;
+        </a>
+      </div>
       <div class="grid gap-4 sm:grid-cols-2">
         {labsToShow.map((lab) => (
           <ContentCard
@@ -44,11 +64,6 @@ const labsToShow = featuredLabs.length > 0 ? featuredLabs : recentLabs;
             href={`${baseURL}/labs/${lab.id}/`}
           />
         ))}
-      </div>
-      <div class="mt-6 text-center">
-        <a href={`${baseURL}/labs/`} class="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
-          모든 실습 자료 보기 &rarr;
-        </a>
       </div>
     </section>
   )}

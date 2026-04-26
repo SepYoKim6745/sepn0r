@@ -13,10 +13,30 @@
   src: url("https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/variable/pretendardvariable-dynamic-subset.woff2") format("woff2-variations");
 }
 
-/* Code block styling */
+/* ── Scroll-driven fade-in ────────────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fade-up 0.6s ease-out both;
+}
+
+.fade-in-delay-1 { animation-delay: 0.1s; }
+.fade-in-delay-2 { animation-delay: 0.2s; }
+.fade-in-delay-3 { animation-delay: 0.3s; }
+
+/* ── Code block styling ───────────────────────────────── */
 pre {
-  border-radius: 0.5rem;
-  padding: 1.25rem;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.7;
@@ -26,17 +46,18 @@ pre > code {
   font-family: var(--font-mono);
 }
 
-/* Details / Summary — 정답 예시 토글 박스 */
+/* ── Details / Summary ────────────────────────────────── */
 details {
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   margin: 1rem 0;
   background-color: #ffffff;
+  transition: background-color 0.2s ease;
 }
 
 details[open] {
-  background-color: #f9fafb;
+  background-color: #fafafa;
 }
 
 summary {
@@ -69,8 +90,13 @@ details[open] > *:not(summary) {
   border-top: 1px solid #e5e7eb;
 }
 
-/* prose 안의 details margin 보정 */
 .prose details {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+/* ── Selection highlight ──────────────────────────────── */
+::selection {
+  background-color: #d4d4d4;
+  color: #171717;
 }

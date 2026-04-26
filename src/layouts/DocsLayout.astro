@@ -19,7 +19,6 @@ const { title, description = '개발자 & 강사 포트폴리오 및 실습 자�
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const baseURL = import.meta.env.BASE_URL;
 
-// 카테고리별 그룹핑 및 정렬
 const categoryNames = [...new Set(allLabs.map(lab => lab.data.category))].sort();
 const categories = categoryNames.map(cat => ({
   name: cat,
@@ -58,59 +57,59 @@ const categories = categoryNames.map(cat => ({
   </head>
   <body class="min-h-screen bg-white text-neutral-900 font-sans antialiased">
 
-    <!-- 상단 네비게이션 -->
-    <div class="border-b border-neutral-200">
-      <div class="mx-auto max-w-screen-xl px-6">
-        <nav class="flex items-center justify-between py-4">
-          <a href={baseURL} class="text-lg font-bold tracking-tight">sepn0r</a>
-          <button
-            id="menu-toggle"
-            class="sm:hidden p-2 -mr-2"
-            aria-label="메뉴 열기"
-            aria-expanded="false"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <ul class="hidden sm:flex gap-6 text-sm font-medium text-neutral-600">
-            <li><a href={`${baseURL}/labs/`} class="hover:text-neutral-900 transition-colors">Labs</a></li>
-            <li><a href={`${baseURL}/portfolio/`} class="hover:text-neutral-900 transition-colors">Portfolio</a></li>
-            <li><a href={`${baseURL}/about/`} class="hover:text-neutral-900 transition-colors">About</a></li>
-          </ul>
-        </nav>
+    <!-- Frosted glass nav -->
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-neutral-200/60">
+      <div class="mx-auto max-w-screen-xl px-6 flex items-center justify-between h-14">
+        <a href={baseURL} class="text-base font-semibold tracking-tight transition-opacity hover:opacity-60">
+          sepn0r
+        </a>
+        <button
+          id="menu-toggle"
+          class="sm:hidden p-2 -mr-2 rounded-lg transition-colors hover:bg-neutral-100"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+        </button>
+        <ul class="hidden sm:flex items-center gap-8 text-sm text-neutral-500">
+          <li><a href={`${baseURL}/labs/`} class="transition-colors hover:text-neutral-900">Labs</a></li>
+          <li><a href={`${baseURL}/portfolio/`} class="transition-colors hover:text-neutral-900">Portfolio</a></li>
+          <li><a href={`${baseURL}/about/`} class="transition-colors hover:text-neutral-900">About</a></li>
+        </ul>
       </div>
-    </div>
+    </nav>
 
-    <!-- 모바일 햄버거 메뉴 -->
+    <!-- Mobile menu overlay -->
     <div
       id="mobile-menu"
-      class="fixed inset-0 z-50 bg-white hidden flex-col items-center justify-center gap-8"
+      class="fixed inset-0 z-50 bg-white/95 backdrop-blur-xl hidden flex-col items-center justify-center gap-6"
     >
       <button
         id="menu-close"
-        class="absolute top-8 right-6 p-2"
+        class="absolute top-4 right-5 p-2 rounded-lg transition-colors hover:bg-neutral-100"
         aria-label="메뉴 닫기"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-      <a href={baseURL} class="text-2xl font-medium">Home</a>
-      <a href={`${baseURL}/labs/`} class="text-2xl font-medium">Labs</a>
-      <a href={`${baseURL}/portfolio/`} class="text-2xl font-medium">Portfolio</a>
-      <a href={`${baseURL}/about/`} class="text-2xl font-medium">About</a>
+      <a href={baseURL} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Home</a>
+      <a href={`${baseURL}/labs/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Labs</a>
+      <a href={`${baseURL}/portfolio/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">Portfolio</a>
+      <a href={`${baseURL}/about/`} class="text-xl font-medium text-neutral-900 transition-opacity hover:opacity-60">About</a>
     </div>
 
-    <!-- 사이드바 + 콘텐츠 레이아웃 -->
+    <!-- Sidebar + Content layout -->
     <div class="flex">
 
-      <!-- 데스크톱 사이드바 -->
-      <aside class="hidden lg:flex flex-col w-64 shrink-0 border-r border-neutral-200 sticky top-0 h-screen overflow-y-auto px-4 py-6">
-        <div class="mb-4">
+      <!-- Desktop sidebar -->
+      <aside class="hidden lg:flex flex-col w-64 shrink-0 border-r border-neutral-200/60 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto px-5 py-8">
+        <div class="mb-6">
           <a
             href={`${baseURL}/labs/`}
-            class="text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors"
+            class="text-xs font-medium text-neutral-400 transition-colors hover:text-neutral-600"
           >
             &larr; 모든 실습 자료
           </a>
@@ -118,16 +117,16 @@ const categories = categoryNames.map(cat => ({
 
         {categories.map(cat => (
           <div class="mb-6">
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+            <h3 class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2 px-3">
               {cat.name}
             </h3>
             {cat.labs.map(lab => (
               <a
                 href={`${baseURL}/labs/${lab.id}/`}
-                class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+                class={`block rounded-lg px-3 py-1.5 text-sm transition-all duration-150 ${
                   lab.id === currentId
                     ? 'bg-neutral-100 text-neutral-900 font-medium'
-                    : 'text-neutral-600 hover:text-neutral-900'
+                    : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
                 }`}
               >
                 {lab.data.title}
@@ -136,17 +135,16 @@ const categories = categoryNames.map(cat => ({
           </div>
         ))}
 
-        <!-- 도구 섹션 (독립 페이지) -->
         <div class="mb-6">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2 px-3">
             도구
           </h3>
           <a
             href={`${baseURL}/labs/prompt-scorer/`}
-            class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+            class={`block rounded-lg px-3 py-1.5 text-sm transition-all duration-150 ${
               currentId === 'prompt-scorer'
                 ? 'bg-neutral-100 text-neutral-900 font-medium'
-                : 'text-neutral-600 hover:text-neutral-900'
+                : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
             }`}
           >
             프롬프트 점수 측정기
@@ -154,28 +152,28 @@ const categories = categoryNames.map(cat => ({
         </div>
       </aside>
 
-      <!-- 모바일 사이드바 오버레이 -->
+      <!-- Mobile sidebar overlay -->
       <div
         id="sidebar-overlay"
-        class="fixed inset-0 z-40 bg-white overflow-y-auto hidden lg:hidden"
+        class="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl overflow-y-auto hidden lg:hidden"
       >
-        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-200/60">
           <span class="text-sm font-semibold text-neutral-700">목차</span>
           <button
             id="sidebar-close"
-            class="p-2 -mr-2"
+            class="p-2 -mr-2 rounded-lg transition-colors hover:bg-neutral-100"
             aria-label="목차 닫기"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <div class="px-4 py-6">
-          <div class="mb-4">
+        <div class="px-5 py-6">
+          <div class="mb-6">
             <a
               href={`${baseURL}/labs/`}
-              class="text-xs font-semibold uppercase tracking-wider text-neutral-400 hover:text-neutral-600 transition-colors"
+              class="text-xs font-medium text-neutral-400 transition-colors hover:text-neutral-600"
             >
               &larr; 모든 실습 자료
             </a>
@@ -183,16 +181,16 @@ const categories = categoryNames.map(cat => ({
 
           {categories.map(cat => (
             <div class="mb-6">
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+              <h3 class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2 px-3">
                 {cat.name}
               </h3>
               {cat.labs.map(lab => (
                 <a
                   href={`${baseURL}/labs/${lab.id}/`}
-                  class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+                  class={`block rounded-lg px-3 py-1.5 text-sm transition-all duration-150 ${
                     lab.id === currentId
                       ? 'bg-neutral-100 text-neutral-900 font-medium'
-                      : 'text-neutral-600 hover:text-neutral-900'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
                   }`}
                 >
                   {lab.data.title}
@@ -201,17 +199,16 @@ const categories = categoryNames.map(cat => ({
             </div>
           ))}
 
-          <!-- 도구 섹션 (독립 페이지) -->
           <div class="mb-6">
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2 px-3">
+            <h3 class="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-2 px-3">
               도구
             </h3>
             <a
               href={`${baseURL}/labs/prompt-scorer/`}
-              class={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+              class={`block rounded-lg px-3 py-1.5 text-sm transition-all duration-150 ${
                 currentId === 'prompt-scorer'
                   ? 'bg-neutral-100 text-neutral-900 font-medium'
-                  : 'text-neutral-600 hover:text-neutral-900'
+                  : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
               }`}
             >
               프롬프트 점수 측정기
@@ -220,30 +217,29 @@ const categories = categoryNames.map(cat => ({
         </div>
       </div>
 
-      <!-- 메인 콘텐츠 -->
-      <main class="flex-1 min-w-0 px-6 py-8">
-        <!-- 모바일 목차 버튼 -->
-        <div class="lg:hidden mb-6">
+      <!-- Main content -->
+      <main class="flex-1 min-w-0 px-6 py-10 sm:py-14">
+        <!-- Mobile TOC button -->
+        <div class="lg:hidden mb-8">
           <button
             id="sidebar-toggle"
-            class="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 border border-neutral-200 rounded-md px-3 py-1.5 transition-colors"
+            class="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 rounded-full border border-neutral-200 px-4 py-2 transition-all duration-200 hover:border-neutral-300 hover:shadow-sm"
             aria-expanded="false"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16" />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h10.5M3.75 17.25h16.5" />
             </svg>
             목차 보기
           </button>
         </div>
 
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto fade-in">
           <slot />
         </div>
       </main>
     </div>
 
     <script is:inline>
-      // 햄버거 메뉴
       const toggle = document.getElementById('menu-toggle');
       const close = document.getElementById('menu-close');
       const menu = document.getElementById('mobile-menu');
@@ -266,7 +262,6 @@ const categories = categoryNames.map(cat => ({
       toggle?.addEventListener('click', openMenu);
       close?.addEventListener('click', closeMenu);
 
-      // 사이드바 오버레이
       const sidebarToggle = document.getElementById('sidebar-toggle');
       const sidebarClose = document.getElementById('sidebar-close');
       const sidebarOverlay = document.getElementById('sidebar-overlay');
