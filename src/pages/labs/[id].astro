@@ -50,7 +50,7 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
       <p class="mt-3 text-lg text-neutral-500 leading-relaxed">{entry.data.description}</p>
     </header>
 
-    {(entry.data.playgroundUrl || entry.data.downloadFile) && (
+    {(entry.data.playgroundUrl || entry.data.downloadFile || entry.data.downloads) && (
       <div class="mb-10 flex flex-wrap gap-3">
         {entry.data.playgroundUrl && (
           <a
@@ -71,6 +71,15 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
             {entry.data.downloadLabel || '다운로드'} &darr;
           </a>
         )}
+        {entry.data.downloads?.map((dl) => (
+          <a
+            href={`${baseURL}/downloads/${dl.file}`}
+            download
+            class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
+          >
+            {dl.label} &darr;
+          </a>
+        ))}
       </div>
     )}
 

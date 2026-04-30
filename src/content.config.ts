@@ -13,6 +13,10 @@ const labs = defineCollection({
     playgroundUrl: z.string().url().optional(),
     downloadFile: z.string().optional(),
     downloadLabel: z.string().optional(),
+    downloads: z.array(z.object({
+      file: z.string(),
+      label: z.string(),
+    })).optional(),
     order: z.number().optional(),
     featured: z.boolean().default(false),
   }),
