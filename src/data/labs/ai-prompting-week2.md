@@ -8,6 +8,8 @@ featured: true
 downloads:
   - file: "prompt-engineering-guide2.pdf"
     label: "교재 다운로드"
+  - file: "prompt-engineering-week2-data.zip"
+    label: "실습 자료 다운로드"
 ---
 
 ## 실습 전 체크리스트
