@@ -6,7 +6,7 @@ tags: ["AI", "문서 작성", "NotebookLM", "Perplexity", "보고서", "중급"]
 category: "생성형 AI 활용"
 featured: true
 downloads:
-  - file: "ai-doc-write-guide-data.zip"
+  - file: "ai-doc-write-guide.pdf"
     label: "교재 다운로드"
   - file: "ai-doc-write-guide-data.zip"
     label: "실습 자료 다운로드"
