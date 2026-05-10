@@ -8,7 +8,7 @@ featured: true
 downloads:
   - file: "ai-doc-write-guide-data.zip"
     label: "교재 다운로드"
-  - file: "prompt-engineering-week2-data.zip"
+  - file: "ai-doc-write-guide-data.zip"
     label: "실습 자료 다운로드"
 ---
 
