@@ -545,6 +545,7 @@ STEP 3. URL을 NotebookLM 자료로 추가
   → 통합 답변 가능
 ```
 
+</details>
 
 ---
 
