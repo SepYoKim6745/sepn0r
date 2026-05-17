@@ -217,6 +217,17 @@ const categories = categoryNames.map(cat => ({
         </div>
       </div>
 
+      <!-- Back to top button -->
+      <button
+        id="back-to-top"
+        class="fixed bottom-6 right-6 z-30 hidden items-center justify-center w-10 h-10 rounded-full bg-neutral-800 text-white shadow-lg transition-all duration-200 hover:bg-neutral-700 hover:shadow-xl"
+        aria-label="맨 위로 이동"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+      </button>
+
       <!-- Main content -->
       <main class="flex-1 min-w-0 px-6 py-10 sm:py-14">
         <!-- Mobile TOC button -->
@@ -287,6 +298,31 @@ const categories = categoryNames.map(cat => ({
           if (!menu?.classList.contains('hidden')) closeMenu();
           if (!sidebarOverlay?.classList.contains('hidden')) closeSidebar();
         }
+      });
+
+      // Wrap tables for mobile scroll
+      document.querySelectorAll('.prose table').forEach(table => {
+        if (!table.parentElement?.classList.contains('table-wrapper')) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'table-wrapper';
+          table.parentNode?.insertBefore(wrapper, table);
+          wrapper.appendChild(table);
+        }
+      });
+
+      // Back to top button
+      const backToTop = document.getElementById('back-to-top');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+          backToTop?.classList.remove('hidden');
+          backToTop?.classList.add('flex');
+        } else {
+          backToTop?.classList.add('hidden');
+          backToTop?.classList.remove('flex');
+        }
+      });
+      backToTop?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     </script>
   </body>

@@ -66,18 +66,20 @@ const formattedDate = entry.data.pubDate.toLocaleDateString('ko-KR', {
           <a
             href={`${baseURL}/downloads/${entry.data.downloadFile}`}
             download
-            class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
+            class="inline-flex items-center gap-2 rounded-full bg-neutral-100 border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-neutral-700 transition-all duration-200 hover:bg-neutral-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-md"
           >
-            {entry.data.downloadLabel || '다운로드'} &darr;
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            {entry.data.downloadLabel || '다운로드'}
           </a>
         )}
         {entry.data.downloads?.map((dl) => (
           <a
             href={`${baseURL}/downloads/${dl.file}`}
             download
-            class="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 transition-all duration-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-sm"
+            class="inline-flex items-center gap-2 rounded-full bg-neutral-100 border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-neutral-700 transition-all duration-200 hover:bg-neutral-200 hover:border-neutral-400 hover:text-neutral-900 hover:shadow-md"
           >
-            {dl.label} &darr;
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            {dl.label}
           </a>
         ))}
       </div>
